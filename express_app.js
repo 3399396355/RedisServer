@@ -70,6 +70,8 @@ app.get( "/redis/get/:key" , ( req , res )=> {
 // }
 app.post( "/redis/lrange" , async ( req , res )=> {
 	try {
+		console.log( "POST /redis/lrange" );
+		console.log( req.body );
 		const key = req.body.key;
 		const starting_position = req.body.starting_position || 0;
 		const ending_position = req.body.ending_position || -1;
@@ -77,6 +79,7 @@ app.post( "/redis/lrange" , async ( req , res )=> {
 		if ( !key ) { res.send( false ); return; }
 		if ( !channel ) { res.send( false ); return; }
 		const result_data = await RedisGetListRange( RedisManager , key , starting_position , ending_position );
+		console.log( result_data );
 		const return_message = {
 			message: `new_${ pluralize( message.channel ) }` ,
 			current_length: result_data.current_length ,
