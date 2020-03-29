@@ -28,10 +28,6 @@ let redis_subscriber;
 
 
 function ON_CONNECTION( socket , req ) {
-	EventEmitter.on( "new_info" , ( info )=> {
-		console.log( info );
-		socket.send( JSON.stringify( { message: "new_info" , data: info } ) );
-	});
 	socket.on( "message" , async ( message )=> {
 		try { message = JSON.parse( message ); }
 		catch( e ) { console.log( e ); return; }
@@ -39,23 +35,23 @@ function ON_CONNECTION( socket , req ) {
 		if ( message.type === "pong" ) {
 			console.log( "inside pong()" );
 		}
-		else if ( message.type === "redis_get_lrange" ) {
-			return new Promise( async ( resolve , reject )=> {
-				try {
-					if ( !message.list_key ) { resolve(); return; }
-					if ( !message.channel ) { resolve(); return; }
-					const starting_position = message.starting_position || 0;
-					const ending_position = message.ending_position || -1;
-					const result = await redis_get_lrange( message.list_key , starting_position , ending_position );
-					//console.log( result );
-					socket.send( JSON.stringify( { message: `new_${ pluralize( message.channel ) }` , current_length: result.current_length , data: result.data } ) );
-					resolve( result );
-					return;
+		// else if ( message.type === "redis_get_lrange" ) {
+		// 	return new Promise( async ( resolve , reject )=> {
+		// 		try {
+		// 			if ( !message.list_key ) { resolve(); return; }
+		// 			if ( !message.channel ) { resolve(); return; }
+		// 			const starting_position = message.starting_position || 0;
+		// 			const ending_position = message.ending_position || -1;
+		// 			const result = await redis_get_lrange( message.list_key , starting_position , ending_position );
+		// 			//console.log( result );
+		// 			socket.send( JSON.stringify( { message: `new_${ pluralize( message.channel ) }` , current_length: result.current_length , data: result.data } ) );
+		// 			resolve( result );
+		// 			return;
 
-				}
-				catch( error ) { console.log( error ); resolve( error ); return; }
-			});
-		}
+		// 		}
+		// 		catch( error ) { console.log( error ); resolve( error ); return; }
+		// 	});
+		// }
 
 	});
 

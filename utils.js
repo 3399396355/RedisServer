@@ -23,3 +23,17 @@ function pluralize( noun , suffix = "s" ) {
 	return noun + "s";
 }
 module.exports.pluralize = pluralize;
+
+function redis_get_lrange( redis , key , start , end ) {
+	return new Promise( async ( resolve , reject )=> {
+		try {
+			const current_length = await redis_manager.listGetLength( key );
+			redis.lrange( key , start , end , ( error , results )=> {
+				resolve( { current_length: current_length , data: results } );
+				return;
+			});
+		}
+		catch( error ) { console.log( error ); resolve( error ); return; }
+	});
+}
+module.exports.redis_get_lrange = redis_get_lrange;
