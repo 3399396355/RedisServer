@@ -18,7 +18,7 @@ let app = express();
 // 	users: Personal.websocket_server.http_auth.users ,
 // 	challenge: true
 // }));
-app.use( helmet() );
+//app.use( helmet() );
 //app.use( express.static( path.join( __dirname , "client" ) ) );
 app.use( express.static( Personal.websocket_server.ionic_build_static_path ) );
 //app.use( cors( { origin: "http://localhost:" + PORT.toString() } ) );
