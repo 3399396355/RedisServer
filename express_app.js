@@ -11,6 +11,7 @@ const Personal = require( "./main.js" ).personal;
 const EventEmitter = require( "./main.js" ).event_emitter;
 const RedisManager = require( "./main.js" ).redis_manager;
 const RedisGetListRange = require( "./utils.js" ).redis_get_lrange;
+const pluralize = require( "./utils.js" ).pluralize;
 
 let app = express();
 // app.use( basicAuth({
@@ -68,19 +69,24 @@ app.get( "/redis/get/:key" , ( req , res )=> {
 // 	"channel": "log"
 // }
 app.post( "/redis/lrange" , async ( req , res )=> {
-	const key = req.body.key;
-	const starting_position = req.body.starting_position || 0;
-	const ending_position = req.body.ending_position || -1;
-	const channel = req.body.channel;
-	if ( !key ) { res.send( false ); return; }
-	if ( !channel ) { res.send( false ); return; }
-	const result_data = await RedisGetListRange( RedisManager.redis , key , starting_position , ending_position );
-	const return_message = {
-		message: `new_${ pluralize( message.channel ) }` ,
-		current_length: result_data.current_length ,
-		data: result_data.data
+	try {
+		const key = req.body.key;
+		const starting_position = req.body.starting_position || 0;
+		const ending_position = req.body.ending_position || -1;
+		const channel = req.body.channel;
+		if ( !key ) { res.send( false ); return; }
+		if ( !channel ) { res.send( false ); return; }
+		const result_data = await RedisGetListRange( RedisManager.redis , key , starting_position , ending_position );
+		const return_message = {
+			message: `new_${ pluralize( message.channel ) }` ,
+			current_length: result_data.current_length ,
+			data: result_data.data
+		}
+		res.send( JSON.stringify( return_message ) );
 	}
-	res.send( JSON.stringify( return_message ) );
+	catch( error ) {
+		res.send( JSON.stringify( { error: error } ) );
+	}
 });
 
 
