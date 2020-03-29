@@ -6,8 +6,6 @@ const WebSocket = require( "ws" );
 //const RedisUtils = require( "redis-manager-utils" );
 const EventEmitter = require( "events" );
 
-const PythonScriptSubscriber = require( "./python_script_subscriber.js" );
-
 process.on( "unhandledRejection" , function( reason , p ) {
 	console.error( reason, "Unhandled Rejection at Promise" , p );
 	console.trace();
@@ -30,6 +28,22 @@ process.on( "uncaughtException" , function( err ) {
 
 	const event_emitter = new EventEmitter();
 	module.exports.event_emitter = event_emitter;
+
+	const redis_manager = new RedisUtils( Personal.redis.database_number , Personal.redis.host , Personal.redis.port );
+	await redis_manager.init();
+	const redis_subscriber = new RedisUtils( Personal.redis.database_number , Personal.redis.host , Personal.redis.port );
+	await redis_subscriber.init();
+	redis_subscriber.redis.on( "message" , ( channel , message )=> {
+		//console.log( "sub channel " + channel + ": " + message );
+		console.log( "new message from: " + channel );
+		console.log( message );
+		if ( channel === "new_info" ) {
+			EventEmitter.emit( "new_info" , message );
+		}
+	});
+	redis_subscriber.redis.subscribe( "new_info" );
+	module.exports.redis_manager = redis_manager;
+	module.exports.redis_subscriber = redis_subscriber;
 
 	// const python_script_subscriber = await PythonScriptSubscriber.init();
 	// python_script_subscriber.redis.subscribe( "python-script-controller" );
