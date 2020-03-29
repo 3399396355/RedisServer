@@ -81,7 +81,7 @@ app.post( "/redis/lrange" , async ( req , res )=> {
 		const result_data = await RedisGetListRange( RedisManager , key , starting_position , ending_position );
 		console.log( result_data );
 		const return_message = {
-			message: `new_${ pluralize( message.channel ) }` ,
+			message: `new_${ pluralize( channel ) }` ,
 			current_length: result_data.current_length ,
 			data: result_data.data
 		}
