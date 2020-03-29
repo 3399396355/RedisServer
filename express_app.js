@@ -13,10 +13,10 @@ const RedisManager = require( "./main.js" ).redis_manager;
 const RedisGetListRange = require( "./utils.js" ).redis_get_lrange;
 
 let app = express();
-app.use( basicAuth({
-	users: Personal.websocket_server.http_auth.users ,
-	challenge: true
-}));
+// app.use( basicAuth({
+// 	users: Personal.websocket_server.http_auth.users ,
+// 	challenge: true
+// }));
 app.use( helmet() );
 //app.use( express.static( path.join( __dirname , "client" ) ) );
 app.use( express.static( Personal.websocket_server.ionic_build_static_path ) );
