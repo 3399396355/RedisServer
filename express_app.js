@@ -76,7 +76,7 @@ app.post( "/redis/lrange" , async ( req , res )=> {
 		const channel = req.body.channel;
 		if ( !key ) { res.send( false ); return; }
 		if ( !channel ) { res.send( false ); return; }
-		const result_data = await RedisGetListRange( RedisManager.redis , key , starting_position , ending_position );
+		const result_data = await RedisGetListRange( RedisManager , key , starting_position , ending_position );
 		const return_message = {
 			message: `new_${ pluralize( message.channel ) }` ,
 			current_length: result_data.current_length ,

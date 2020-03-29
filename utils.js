@@ -24,11 +24,11 @@ function pluralize( noun , suffix = "s" ) {
 }
 module.exports.pluralize = pluralize;
 
-function redis_get_lrange( redis , key , start , end ) {
+function redis_get_lrange( redis_manager , key , start , end ) {
 	return new Promise( async ( resolve , reject )=> {
 		try {
 			const current_length = await redis_manager.listGetLength( key );
-			redis.lrange( key , start , end , ( error , results )=> {
+			redis_manager.redis.lrange( key , start , end , ( error , results )=> {
 				resolve( { current_length: current_length , data: results } );
 				return;
 			});
