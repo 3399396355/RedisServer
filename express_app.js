@@ -69,7 +69,7 @@ app.get( "/redis/get/:key" , ( req , res )=> {
 // }
 app.post( "/redis/lrange" , ( req , res )=> {
 	const key = req.body.key;
-	const starting_position = req.body.starting_position; || 0;
+	const starting_position = req.body.starting_position || 0;
 	const ending_position = req.body.ending_position || -1;
 	const channel = req.body.channel;
 	if ( !key ) { res.send( false ); return; }
