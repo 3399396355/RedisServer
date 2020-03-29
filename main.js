@@ -3,7 +3,7 @@ const path = require( "path" );
 const ip = require( "ip" );
 const http = require( "http" );
 const WebSocket = require( "ws" );
-//const RedisUtils = require( "redis-manager-utils" );
+const RedisUtils = require( "redis-manager-utils" );
 const EventEmitter = require( "events" );
 
 process.on( "unhandledRejection" , function( reason , p ) {
