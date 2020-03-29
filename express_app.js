@@ -67,7 +67,7 @@ app.get( "/redis/get/:key" , ( req , res )=> {
 // 	"ending_position": count ,
 // 	"channel": "log"
 // }
-app.post( "/redis/lrange" , ( req , res )=> {
+app.post( "/redis/lrange" , async ( req , res )=> {
 	const key = req.body.key;
 	const starting_position = req.body.starting_position || 0;
 	const ending_position = req.body.ending_position || -1;
