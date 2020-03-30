@@ -39,7 +39,16 @@ function ComputeResult( message ) {
 	});
 }
 
+// https://stackoverflow.com/a/46878342
+function s4() {
+	return Math.floor( ( 1 + Math.random() ) * 0x10000 ).toString( 16 ).substring( 1 );
+}
+function GetUniqueID() {
+	return s4() + s4() + '-' + s4();
+}
+
 function ON_CONNECTION( socket , req ) {
+	socket.id = GetUniqueID();
 	socket.on( "message" , async ( message )=> {
 		try {
 			if ( !message ) { socket.send( JSON.stringify( result ) ); return; }
@@ -47,7 +56,7 @@ function ON_CONNECTION( socket , req ) {
 			console.log( "Repyling With : " );
 			console.log( result );
 			result = JSON.stringify( result );
-			EventEmitter.emit( "websocket_broadcast" , result );
+			EventEmitter.emit( "websocket_broadcast" , socket.id , result );
 			socket.send( result );
 		}
 		catch( error ) {

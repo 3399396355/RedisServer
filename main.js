@@ -70,11 +70,14 @@ process.on( "uncaughtException" , function( err ) {
 	websocket_server.on( "connection" ,  WebSocketManager.on_connection );
 
 	// https://stackoverflow.com/a/38754039
-	event_emitter.on( "websocket_broadcast" , ( info )=> {
+	// https://stackoverflow.com/a/46878342
+	event_emitter.on( "websocket_broadcast" , ( id , info )=> {
 		//console.log( info );
 		//socket.send( JSON.stringify( { message: "new_info" , data: info } ) );
 		websocket_server.clients.forEach( function each( client ) {
-			client.send( info );
+			if ( client.id !== id ) {
+				client.send( info );
+			}
 		});
 	});
 
