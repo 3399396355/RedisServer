@@ -13,8 +13,9 @@ function ON_CONNECTION( socket , req ) {
 		try { message = JSON.parse( message ); }
 		catch( e ) { console.log( e ); return; }
 		console.log( message );
-		if ( message.type === "pong" ) {
+		if ( message.type === "ping" ) {
 			console.log( "inside pong()" );
+			socket.send( JSON.stringify( message: "pong" ) );
 		}
 		else if ( message.type === "redis_get_lrange" ) {
 			return new Promise( async ( resolve , reject )=> {
@@ -23,7 +24,7 @@ function ON_CONNECTION( socket , req ) {
 					if ( !message.channel ) { resolve(); return; }
 					const starting_position = message.starting_position || 0;
 					const ending_position = message.ending_position || -1;
-					const result = await redis_get_lrange( RedisManager , message.list_key , starting_position , ending_position );
+					const result = await RedisGetLRange( RedisManager , message.list_key , starting_position , ending_position );
 					//console.log( result );
 					socket.send( JSON.stringify( { message: `new_${ pluralize( message.channel ) }` , current_length: result.current_length , data: result.data } ) );
 					resolve( result );
