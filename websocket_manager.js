@@ -22,11 +22,14 @@ function ON_CONNECTION( socket , req ) {
 				try {
 					if ( !message.list_key ) { resolve(); return; }
 					if ( !message.channel ) { resolve(); return; }
+					const channel = message.channel;
+					const message = "new_" + pluralize( channel );
+					console.log( message );
 					const starting_position = message.starting_position || 0;
 					const ending_position = message.ending_position || -1;
 					const result = await RedisGetLRange( RedisManager , message.list_key , starting_position , ending_position );
 					//console.log( result );
-					socket.send( JSON.stringify( { message: `new_${ pluralize( message.channel ) }` , current_length: result.current_length , data: result.data } ) );
+					socket.send( JSON.stringify( { message: message , current_length: result.current_length , data: result.data } ) );
 					resolve( result );
 					return;
 
