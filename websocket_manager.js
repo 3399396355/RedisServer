@@ -44,7 +44,7 @@ function s4() {
 	return Math.floor( ( 1 + Math.random() ) * 0x10000 ).toString( 16 ).substring( 1 );
 }
 function GetUniqueID() {
-	return s4() + s4() + '-' + s4();
+	return s4() + "-" + s4() + "-" + s4();
 }
 
 function ON_CONNECTION( socket , req ) {
@@ -53,7 +53,7 @@ function ON_CONNECTION( socket , req ) {
 		try {
 			if ( !message ) { socket.send( JSON.stringify( result ) ); return; }
 			let result = await ComputeResult( message );
-			result.client_id = socket.id;
+			result.socket_id = socket.id;
 			console.log( "Repyling With : " );
 			console.log( result );
 			result = JSON.stringify( result );
