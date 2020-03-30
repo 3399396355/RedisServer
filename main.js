@@ -1,5 +1,6 @@
 const process = require( "process" );
 const path = require( "path" );
+const fs = require( "fs" );
 const ip = require( "ip" );
 const http = require( "http" );
 const WebSocket = require( "ws" );
