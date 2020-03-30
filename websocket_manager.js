@@ -6,7 +6,7 @@ const RedisGetLRange = require( "./utils.js" ).redis_get_lrange;
 const EventEmitter = require( "./main.js" ).event_emitter;
 const sleep = require( "./utils.js" ).sleep;
 const get_eastern_time_key_suffix = require( "./utils.js" ).get_eastern_time_key_suffix;
-const pluralize = require( "./utils.js" ).get_eastern_time_key_suffix;
+const pluralize = require( "./utils.js" ).pluralize;
 
 function ComputeResult( message ) {
 	return new Promise( async ( resolve , reject ) => {
@@ -25,9 +25,7 @@ function ComputeResult( message ) {
 				if ( !message.list_key ) { resolve( { message: "no list key sent" } ); return; }
 				if ( !message.channel ) { resolve( { message: "no channel provided" } ); return; }
 				const channel = message.channel;
-				console.log( channel );
 				const info_message = "new_" + pluralize( channel );
-				console.log( info_message );
 				const starting_position = message.starting_position || 0;
 				const ending_position = message.ending_position || -1;
 				const redis_data = await RedisGetLRange( RedisManager , message.list_key , starting_position , ending_position );
