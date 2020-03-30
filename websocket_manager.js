@@ -46,7 +46,9 @@ function ON_CONNECTION( socket , req ) {
 			let result = await ComputeResult( message );
 			console.log( "Repyling With : " );
 			console.log( result );
-			socket.send( JSON.stringify( result ) );
+			result = JSON.stringify( result );
+			EventEmitter.emit( "websocket_broadcast" , result );
+			socket.send( result );
 		}
 		catch( error ) {
 			try {
