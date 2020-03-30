@@ -15,7 +15,7 @@ function ON_CONNECTION( socket , req ) {
 		console.log( message );
 		if ( message.type === "ping" ) {
 			console.log( "inside pong()" );
-			socket.send( JSON.stringify( message: "pong" ) );
+			socket.send( JSON.stringify( { message: "pong" } ) );
 		}
 		else if ( message.type === "redis_get_lrange" ) {
 			return new Promise( async ( resolve , reject )=> {
