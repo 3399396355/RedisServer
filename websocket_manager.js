@@ -21,15 +21,16 @@ function ComputeResult( message ) {
 				return;
 			}
 			else if ( message.type === "redis_get_lrange" ) {
-				if ( !message.list_key ) { resolve( { message: "no list key sent" } ); return; }
-				if ( !message.channel ) {  resolve( { message: "no channel provided" } ); return; }
-				const message = "new_" + pluralize( message.channel );
 				console.log( message );
+				if ( !message.list_key ) { resolve( { message: "no list key sent" } ); return; }
+				if ( !message.channel ) { resolve( { message: "no channel provided" } ); return; }
+				const info_message = "new_" + pluralize( message.channel );
+				console.log( info_message );
 				const starting_position = message.starting_position || 0;
 				const ending_position = message.ending_position || -1;
 				const redis_data = await RedisGetLRange( RedisManager , message.list_key , starting_position , ending_position );
 				console.log( redis_data );
-				resolve( { message: message , current_length: redis_data.current_length , data: redis_data.data } );
+				resolve( { message: info_message , current_length: redis_data.current_length , data: redis_data.data } );
 				return;
 
 			}
