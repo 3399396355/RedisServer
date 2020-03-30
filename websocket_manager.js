@@ -14,16 +14,15 @@ function ComputeResult( message ) {
 			console.log( "Computing Result for WebSocket Message ()=>" );
 			console.log( message );
 			try { message = JSON.parse( message ); }
-			catch( e ) { console.log( e ); resolve( { message: e } ); return; }
+			catch( e ) { console.log( e ); resolve( { error: e.stack } ); return; }
 			if ( message.type === "ping" ) {
-				console.log( "inside pong()" );
 				resolve( { message: "pong" } );
 				return;
 			}
 			else if ( message.type === "redis_get_lrange" ) {
 				console.log( message );
-				if ( !message.list_key ) { resolve( { message: "no list key sent" } ); return; }
-				if ( !message.channel ) { resolve( { message: "no channel provided" } ); return; }
+				if ( !message.list_key ) { resolve( { error: "no list key sent" } ); return; }
+				if ( !message.channel ) { resolve( { error: "no channel provided" } ); return; }
 				const channel = message.channel;
 				const info_message = "new_" + pluralize( channel );
 				const starting_position = message.starting_position || 0;
@@ -32,20 +31,29 @@ function ComputeResult( message ) {
 				console.log( redis_data );
 				resolve( { message: info_message , current_length: redis_data.current_length , data: redis_data.data } );
 				return;
-
 			}
-			resolve( { message: "no message type sent" } );
+			resolve( { error: "no message type sent" } );
 			return;
 		}
-		catch( error ) { console.log( error ); resolve( { message: error } ); return; }
+		catch( error ) { console.log( error ); resolve( { error: error.stack } ); return; }
 	});
 }
 
 function ON_CONNECTION( socket , req ) {
 	socket.on( "message" , async ( message )=> {
-		if ( !message ) { socket.send( JSON.stringify( result ) ); return; }
-		let result = await ComputeResult( message );
-		socket.send( JSON.stringify( result ) );
+		try {
+			if ( !message ) { socket.send( JSON.stringify( result ) ); return; }
+			let result = await ComputeResult( message );
+			console.log( "Repyling With : " );
+			console.log( result );
+			socket.send( JSON.stringify( result ) );
+		}
+		catch( error ) {
+			try {
+				socket.send( JSON.stringify( { error: error.stack } ) );
+			}
+			catch( error ) { console.log( "Something Wrong With WebSocket" ); }
+		}
 	});
 
 }
