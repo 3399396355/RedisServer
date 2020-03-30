@@ -12,7 +12,7 @@ function ComputeResult( message ) {
 	return new Promise( async ( resolve , reject ) => {
 		try {
 			try { message = JSON.parse( message ); }
-			catch( e ) { console.log( e ); result.message = e; resolve( result ); return; }
+			catch( e ) { console.log( e ); resolve( { message: e } ); return; }
 			if ( message.type === "ping" ) {
 				console.log( "inside pong()" );
 				resolve( { message: "pong" } );
