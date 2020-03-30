@@ -11,6 +11,8 @@ const pluralize = require( "./utils.js" ).get_eastern_time_key_suffix;
 function ComputeResult( message ) {
 	return new Promise( async ( resolve , reject ) => {
 		try {
+			console.log( "Computing Result for WebSocket Message ()=>" );
+			console.log( message );
 			try { message = JSON.parse( message ); }
 			catch( e ) { console.log( e ); resolve( { message: e } ); return; }
 			if ( message.type === "ping" ) {
