@@ -2,7 +2,8 @@ const process = require( "process" );
 const path = require( "path" );
 const fs = require( "fs" );
 const ip = require( "ip" );
-const http = require( "http" );
+//const http = require( "http" );
+const http = require( "https" );
 const WebSocket = require( "ws" );
 const RedisUtils = require( "redis-manager-utils" );
 const EventEmitter = require( "events" );
@@ -56,7 +57,7 @@ process.on( "uncaughtException" , function( err ) {
 	// python_script_subscriber.redis.subscribe( "python-script-controller" );
 
 	const express_app = require( "./express_app.js" );
-	const server = http.createServer( ServerCredentials , express_app );
+	const server = https.createServer( ServerCredentials , express_app );
 	const WebSocketManager = require( "./websocket_manager.js" );
 	const websocket_server = new WebSocket.Server( { server } );
 	server.listen( PORT , ()=> {
