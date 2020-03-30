@@ -53,11 +53,12 @@ function ON_CONNECTION( socket , req ) {
 		try {
 			if ( !message ) { socket.send( JSON.stringify( result ) ); return; }
 			let result = await ComputeResult( message );
+			result.client_id = socket.id;
 			console.log( "Repyling With : " );
 			console.log( result );
 			result = JSON.stringify( result );
-			EventEmitter.emit( "websocket_broadcast" , socket.id , result );
 			socket.send( result );
+			EventEmitter.emit( "websocket_broadcast" , socket.id , result );
 		}
 		catch( error ) {
 			try {
