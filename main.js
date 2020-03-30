@@ -2,8 +2,8 @@ const process = require( "process" );
 const path = require( "path" );
 const fs = require( "fs" );
 const ip = require( "ip" );
-//const http = require( "http" );
-const https = require( "https" );
+const http = require( "http" );
+//const https = require( "https" );
 const WebSocket = require( "ws" );
 const RedisUtils = require( "redis-manager-utils" );
 const EventEmitter = require( "events" );
@@ -23,6 +23,7 @@ process.on( "uncaughtException" , function( err ) {
 	const Personal = require( PersonalFilePath );
 	module.exports.personal = Personal;
 
+	// https://stackoverflow.com/a/27940375
 	const ServerCertificatePath = path.join( process.env.HOME , ".config" , "personal" , "RedisServer" ,  "cert.pem" );
 	const ServerPrivateKeyPath = path.join( process.env.HOME , ".config" , "personal" , "RedisServer" ,  "key.pem" );
 	const ServerCertificateFile = fs.readFileSync( ServerCertificatePath , "utf8" );
@@ -57,7 +58,8 @@ process.on( "uncaughtException" , function( err ) {
 	// python_script_subscriber.redis.subscribe( "python-script-controller" );
 
 	const express_app = require( "./express_app.js" );
-	const server = https.createServer( ServerCredentials , express_app );
+	const server = http.createServer( express_app );
+	//const server = https.createServer( ServerCredentials , express_app );
 	const WebSocketManager = require( "./websocket_manager.js" );
 	const websocket_server = new WebSocket.Server( { server } );
 	server.listen( PORT , ()=> {
