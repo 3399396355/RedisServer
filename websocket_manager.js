@@ -8,36 +8,41 @@ const sleep = require( "./utils.js" ).sleep;
 const get_eastern_time_key_suffix = require( "./utils.js" ).get_eastern_time_key_suffix;
 const pluralize = require( "./utils.js" ).get_eastern_time_key_suffix;
 
+function ComputeResult( message ) {
+	return new Promise( async ( resolve , reject ) => {
+		try {
+			try { message = JSON.parse( message ); }
+			catch( e ) { console.log( e ); result.message = e; resolve( result ); return; }
+			if ( message.type === "ping" ) {
+				console.log( "inside pong()" );
+				resolve( { message: "pong" } );
+				return;
+			}
+			else if ( message.type === "redis_get_lrange" ) {
+				if ( !message.list_key ) { resolve( { message: "no list key sent" } ); return; }
+				if ( !message.channel ) {  resolve( { message: "no channel provided" } ); return; }
+				const message = "new_" + pluralize( message.channel );
+				console.log( message );
+				const starting_position = message.starting_position || 0;
+				const ending_position = message.ending_position || -1;
+				const redis_data = await RedisGetLRange( RedisManager , message.list_key , starting_position , ending_position );
+				console.log( redis_data );
+				resolve( { message: message , current_length: redis_data.current_length , data: redis_data.data } );
+				return;
+
+			}
+			resolve( { message: "no message type sent" } );
+			return;
+		}
+		catch( error ) { console.log( error ); resolve( { message: error } ); return; }
+	});
+}
+
 function ON_CONNECTION( socket , req ) {
 	socket.on( "message" , async ( message )=> {
-		try { message = JSON.parse( message ); }
-		catch( e ) { console.log( e ); return; }
-		console.log( message );
-		if ( message.type === "ping" ) {
-			console.log( "inside pong()" );
-			socket.send( JSON.stringify( { message: "pong" } ) );
-		}
-		else if ( message.type === "redis_get_lrange" ) {
-			return new Promise( async ( resolve , reject )=> {
-				try {
-					if ( !message.list_key ) { resolve(); return; }
-					if ( !message.channel ) { resolve(); return; }
-					const channel = message.channel;
-					const message = "new_" + pluralize( channel );
-					console.log( message );
-					const starting_position = message.starting_position || 0;
-					const ending_position = message.ending_position || -1;
-					const result = await RedisGetLRange( RedisManager , message.list_key , starting_position , ending_position );
-					//console.log( result );
-					socket.send( JSON.stringify( { message: message , current_length: result.current_length , data: result.data } ) );
-					resolve( result );
-					return;
-
-				}
-				catch( error ) { console.log( error ); resolve( error ); return; }
-			});
-		}
-
+		if ( !message ) { socket.send( JSON.stringify( result ) ); return; }
+		let result = await ComputeResult( message );
+		socket.send( JSON.stringify( result ) );
 	});
 
 }
