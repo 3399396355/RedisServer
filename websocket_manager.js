@@ -24,7 +24,9 @@ function ComputeResult( message ) {
 				console.log( message );
 				if ( !message.list_key ) { resolve( { message: "no list key sent" } ); return; }
 				if ( !message.channel ) { resolve( { message: "no channel provided" } ); return; }
-				const info_message = "new_" + pluralize( message.channel );
+				const channel = message.channel;
+				console.log( channel );
+				const info_message = "new_" + pluralize( channel );
 				console.log( info_message );
 				const starting_position = message.starting_position || 0;
 				const ending_position = message.ending_position || -1;
