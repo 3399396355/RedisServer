@@ -21,6 +21,12 @@ process.on( "uncaughtException" , function( err ) {
 	const Personal = require( PersonalFilePath );
 	module.exports.personal = Personal;
 
+	const ServerCertificatePath = path.join( process.env.HOME , ".config" , "personal" , "RedisServer" ,  "cert.pem" );
+	const ServerPrivateKeyPath = path.join( process.env.HOME , ".config" , "personal" , "RedisServer" ,  "key.pem" );
+	const ServerCertificateFile = fs.readFileSync( ServerCertificatePath , "utf8" );
+	const ServerPrivateKeyFile = fs.readFileSync( ServerPrivateKeyPath , "utf8" );
+	const ServerCredentials = { key: ServerPrivateKeyFile , cert: ServerCertificateFile };
+
 	//const PORT = Personal.websocket_server.port || 6262;
 	const PORT = 6464;
 	module.exports.port = PORT;
@@ -49,7 +55,7 @@ process.on( "uncaughtException" , function( err ) {
 	// python_script_subscriber.redis.subscribe( "python-script-controller" );
 
 	const express_app = require( "./express_app.js" );
-	const server = http.createServer( express_app );
+	const server = http.createServer( ServerCredentials , express_app );
 	const WebSocketManager = require( "./websocket_manager.js" );
 	const websocket_server = new WebSocket.Server( { server } );
 	server.listen( PORT , ()=> {
