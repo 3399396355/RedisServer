@@ -47,8 +47,9 @@ process.on( "uncaughtException" , function( err ) {
 		console.log( "new message from: " + channel );
 		console.log( message );
 		if ( channel === "new_info" ) {
-			message = { message: channel , data: message };
-			event_emitter.emit( "websocket_broadcast" , "0" , JSON.stringify( message ) );
+			//message = { message: channel , data: message };
+			//event_emitter.emit( "websocket_broadcast" , "0" , JSON.stringify( message ) );
+			event_emitter.emit( "websocket_broadcast" , "0" , message );
 		}
 	});
 	redis_subscriber.redis.subscribe( "new_info" );
