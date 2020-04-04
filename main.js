@@ -4,7 +4,7 @@ const fs = require( "fs" );
 const ip = require( "ip" );
 const http = require( "http" );
 //const https = require( "https" );
-//const WebSocket = require( "ws" );
+const WebSocket = require( "ws" );
 const RedisUtils = require( "redis-manager-utils" );
 const EventEmitter = require( "events" );
 
@@ -46,29 +46,29 @@ process.on( "uncaughtException" , function( err ) {
 	const express_app = require( "./express_app.js" );
 	const server = http.createServer( express_app );
 	//const server = https.createServer( ServerCredentials , express_app );
-	//const WebSocketManager = require( "./websocket_manager.js" );
-	const WebSocketManager = require( "./io_websocket_manager.js" );
-	//const websocket_server = new WebSocket.Server( { server } );
-	const io = require( 'socket.io' )( server );
+	const WebSocketManager = require( "./websocket_manager.js" );
+	//const WebSocketManager = require( "./io_websocket_manager.js" );
+	const websocket_server = new WebSocket.Server( { server } );
+	//const io = require( 'socket.io' )( server );
 	server.listen( PORT , ()=> {
 		console.log( "Sleep REDIS WebSocket Server Starting" );
 		console.log( `\thttp://:localhost:${ PORT.toString() }` );
 		console.log( `\thttp://:${ LOCAL_IP }:${ PORT.toString() }` );
 	});
-	//websocket_server.on( "connection" ,  WebSocketManager.on_connection );
-	io.on( 'connection' , WebSocketManager.on_connection );
+	websocket_server.on( "connection" ,  WebSocketManager.on_connection );
+	//io.on( 'connection' , WebSocketManager.on_connection );
 
 	// https://stackoverflow.com/a/38754039
 	// https://stackoverflow.com/a/46878342
-	// event_emitter.on( "websocket_broadcast" , ( id , info )=> {
-	// 	//console.log( info );
-	// 	//socket.send( JSON.stringify( { message: "new_info" , data: info } ) );
-	// 	websocket_server.clients.forEach( function each( client ) {
-	// 		if ( client.id !== id ) {
-	// 			client.send( info );
-	// 		}
-	// 	});
-	// });
+	event_emitter.on( "websocket_broadcast" , ( id , info )=> {
+		//console.log( info );
+		//socket.send( JSON.stringify( { message: "new_info" , data: info } ) );
+		websocket_server.clients.forEach( function each( client ) {
+			if ( client.id !== id ) {
+				client.send( info );
+			}
+		});
+	});
 
 	redis_subscriber.redis.on( "message" , ( channel , message )=> {
 		//console.log( "sub channel " + channel + ": " + message );
@@ -77,8 +77,8 @@ process.on( "uncaughtException" , function( err ) {
 		if ( channel === "new_info" ) {
 			//message = { message: channel , data: message };
 			//event_emitter.emit( "websocket_broadcast" , "0" , JSON.stringify( message ) );
-			//event_emitter.emit( "websocket_broadcast" , "0" , message );
-			io.emit( 'broadcast' , message );
+			event_emitter.emit( "websocket_broadcast" , "0" , message );
+			//io.emit( 'broadcast' , message );
 		}
 
 	});
