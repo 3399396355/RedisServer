@@ -61,7 +61,7 @@ function ON_CONNECTION( socket ) {
 
 			//socket.send( result );
 			//EventEmitter.emit( "websocket_broadcast" , socket.id , result );
-			socket.emit( 'request' , result );
+			socket.emit( 'event' , result );
 			EventEmitter.emit( "websocket_broadcast" , result );
 			console.log( data );
 		}
