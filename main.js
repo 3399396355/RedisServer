@@ -50,7 +50,7 @@ process.on( "uncaughtException" , function( err ) {
 	//const server = https.createServer( ServerCredentials , express_app );
 	//const WebSocketManager = require( "./websocket_manager.js" );
 	const WebSocketManager = require( "./io_websocket_manager.js" );
-	const websocket_server = new WebSocket.Server( { server } );
+	//const websocket_server = new WebSocket.Server( { server } );
 	const io = require( 'socket.io' )( server );
 	server.listen( PORT , ()=> {
 		console.log( "Sleep REDIS WebSocket Server Starting" );
