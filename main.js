@@ -42,22 +42,6 @@ process.on( "uncaughtException" , function( err ) {
 	await redis_manager.init();
 	const redis_subscriber = new RedisUtils( Personal.redis.database_number , Personal.redis.host , Personal.redis.port );
 	await redis_subscriber.init();
-	redis_subscriber.redis.on( "message" , ( channel , message )=> {
-		//console.log( "sub channel " + channel + ": " + message );
-		console.log( "new message from: " + channel );
-		console.log( message );
-		if ( channel === "new_info" ) {
-			//message = { message: channel , data: message };
-			//event_emitter.emit( "websocket_broadcast" , "0" , JSON.stringify( message ) );
-			event_emitter.emit( "websocket_broadcast" , "0" , message );
-		}
-	});
-	redis_subscriber.redis.subscribe( "new_info" );
-	module.exports.redis_manager = redis_manager;
-	module.exports.redis_subscriber = redis_subscriber;
-
-	// const python_script_subscriber = await PythonScriptSubscriber.init();
-	// python_script_subscriber.redis.subscribe( "python-script-controller" );
 
 	const express_app = require( "./express_app.js" );
 	const server = http.createServer( express_app );
@@ -76,14 +60,33 @@ process.on( "uncaughtException" , function( err ) {
 
 	// https://stackoverflow.com/a/38754039
 	// https://stackoverflow.com/a/46878342
-	event_emitter.on( "websocket_broadcast" , ( id , info )=> {
-		//console.log( info );
-		//socket.send( JSON.stringify( { message: "new_info" , data: info } ) );
-		websocket_server.clients.forEach( function each( client ) {
-			if ( client.id !== id ) {
-				client.send( info );
-			}
-		});
+	// event_emitter.on( "websocket_broadcast" , ( id , info )=> {
+	// 	//console.log( info );
+	// 	//socket.send( JSON.stringify( { message: "new_info" , data: info } ) );
+	// 	websocket_server.clients.forEach( function each( client ) {
+	// 		if ( client.id !== id ) {
+	// 			client.send( info );
+	// 		}
+	// 	});
+	// });
+
+	redis_subscriber.redis.on( "message" , ( channel , message )=> {
+		//console.log( "sub channel " + channel + ": " + message );
+		console.log( "new message from: " + channel );
+		console.log( message );
+		if ( channel === "new_info" ) {
+			//message = { message: channel , data: message };
+			//event_emitter.emit( "websocket_broadcast" , "0" , JSON.stringify( message ) );
+			//event_emitter.emit( "websocket_broadcast" , "0" , message );
+			io.emit( 'broadcast' , message );
+		}
+
 	});
+	redis_subscriber.redis.subscribe( "new_info" );
+	module.exports.redis_manager = redis_manager;
+	module.exports.redis_subscriber = redis_subscriber;
+
+	// const python_script_subscriber = await PythonScriptSubscriber.init();
+	// python_script_subscriber.redis.subscribe( "python-script-controller" );
 
 })();
