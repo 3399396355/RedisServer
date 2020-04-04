@@ -42,6 +42,8 @@ process.on( "uncaughtException" , function( err ) {
 	await redis_manager.init();
 	const redis_subscriber = new RedisUtils( Personal.redis.database_number , Personal.redis.host , Personal.redis.port );
 	await redis_subscriber.init();
+	module.exports.redis_manager = redis_manager;
+	module.exports.redis_subscriber = redis_subscriber;
 
 	const express_app = require( "./express_app.js" );
 	const server = http.createServer( express_app );
@@ -83,8 +85,6 @@ process.on( "uncaughtException" , function( err ) {
 
 	});
 	redis_subscriber.redis.subscribe( "new_info" );
-	module.exports.redis_manager = redis_manager;
-	module.exports.redis_subscriber = redis_subscriber;
 
 	// const python_script_subscriber = await PythonScriptSubscriber.init();
 	// python_script_subscriber.redis.subscribe( "python-script-controller" );
