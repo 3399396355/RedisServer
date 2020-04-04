@@ -62,15 +62,18 @@ process.on( "uncaughtException" , function( err ) {
 
 	// https://stackoverflow.com/a/38754039
 	// https://stackoverflow.com/a/46878342
-	// event_emitter.on( "websocket_broadcast" , ( id , info )=> {
-	// 	//console.log( info );
-	// 	//socket.send( JSON.stringify( { message: "new_info" , data: info } ) );
-	// 	websocket_server.clients.forEach( function each( client ) {
-	// 		if ( client.id !== id ) {
-	// 			client.send( info );
-	// 		}
-	// 	});
-	// });
+
+	//event_emitter.on( "websocket_broadcast" , ( id , info )=> {
+	event_emitter.on( "websocket_broadcast" , ( message )=> {
+		//console.log( info );
+		//socket.send( JSON.stringify( { message: "new_info" , data: info } ) );
+		// websocket_server.clients.forEach( function each( client ) {
+		// 	if ( client.id !== id ) {
+		// 		client.send( info );
+		// 	}
+		// });
+		io.emit( 'broadcast' , message );
+	});
 
 	redis_subscriber.redis.on( "message" , ( channel , message )=> {
 		//console.log( "sub channel " + channel + ": " + message );

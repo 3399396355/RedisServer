@@ -52,21 +52,25 @@ function ON_CONNECTION( socket ) {
 	socket.on( "event" , async ( data )=> {
 		try {
 			// if ( !message ) { socket.send( JSON.stringify( result ) ); return; }
-			// let result = await ComputeResult( message );
+			let result = await ComputeResult( message );
 			// result.socket_id = socket.id;
-			// console.log( "Repyling With : " );
-			// console.log( result );
-			// result = JSON.stringify( result );
-			// socket.send( result );
-			// EventEmitter.emit( "websocket_broadcast" , socket.id , result );
+			console.log( "Repyling With : " );
+			console.log( result );
+			result = JSON.stringify( result );
+
+			//socket.send( result );
+			//EventEmitter.emit( "websocket_broadcast" , socket.id , result );
+			socket.emit( 'request' , result );
+			EventEmitter.emit( "websocket_broadcast" , result );
 			console.log( data );
 		}
 		catch( error ) {
 			console.log( error );
-			// try {
-			//     socket.send( JSON.stringify( { error: error.stack } ) );
-			// }
-			// catch( error ) { console.log( "Something Wrong With WebSocket" ); }
+			try {
+				//socket.send( JSON.stringify( { error: error.stack } ) );
+				socket.emit( 'request' , { error: error.stack } );
+			}
+			catch( error ) { console.log( "Something Wrong With WebSocket" ); }
 		}
 	});
 
