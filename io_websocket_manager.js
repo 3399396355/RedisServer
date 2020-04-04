@@ -13,8 +13,8 @@ function ComputeResult( message ) {
 		try {
 			console.log( "Computing Result for WebSocket Message ()=>" );
 			console.log( message );
-			try { message = JSON.parse( message ); }
-			catch( e ) { console.log( e ); resolve( { error: e.stack } ); return; }
+			// try { message = JSON.parse( message ); }
+			// catch( e ) { console.log( e ); resolve( { error: e.stack } ); return; }
 			if ( message.type === "ping" ) {
 				resolve( { message: "pong" } );
 				return;
@@ -51,7 +51,7 @@ function ON_CONNECTION( socket ) {
 	// socket.id = GetUniqueID();
 	socket.on( "event" , async ( data )=> {
 		try {
-			console.log( data );
+			//console.log( data );
 			// if ( !message ) { socket.send( JSON.stringify( result ) ); return; }
 			let result = await ComputeResult( data );
 			// result.socket_id = socket.id;
